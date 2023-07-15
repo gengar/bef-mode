@@ -285,8 +285,48 @@
   (set-transient-map bef-mode-rotate-map t)
   (message "bef-mode-rotate"))
 
+(defun bef-mode-current-column ()
+  (- (point) (line-beginning-position)))
+
+(defvar bef-mode-temporary-goal-column 0)
+
+(defvar bef-mode-line-move-functions
+  '(bef-mode-next-line bef-mode-previous-line))
+
+(defun bef-mode-line-move-1 (arg &optional try-vscroll)
+  (if (> arg 0)
+      (next-line arg try-vscroll)
+    (previous-line (- arg) try-vscroll)))
+
+(defun bef-mode-line-move (arg &optional try-vscroll)
+  (if line-move-visual
+      (bef-mode-line-move-1 arg try-vscroll)
+    (let ((col (if (memq last-command bef-mode-line-move-functions)
+                    bef-mode-temporary-goal-column
+                  (setq bef-mode-temporary-goal-column
+                        (bef-mode-current-column)))))
+      (setq temporary-goal-column
+            (save-excursion
+              (forward-line arg)
+              (skip-chars-forward "^\n" (+ (point)
+                                           bef-mode-temporary-goal-column))
+              (current-column)))
+      (let ((last-command #'next-line)
+            (this-command #'next-line))
+        (bef-mode-line-move-1 arg try-vscroll)))))
+
+(defun bef-mode-next-line (&optional arg try-vscroll)
+  (interactive "p\np")
+  (bef-mode-line-move arg try-vscroll))
+
+(defun bef-mode-previous-line (&optional arg try-vscroll)
+  (interactive "p\np")
+  (bef-mode-line-move (- arg) try-vscroll))
+
 (defvar bef-mode-map
   (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-n") #'bef-mode-next-line)
+    (define-key map (kbd "C-p") #'bef-mode-previous-line)
     (define-key map (kbd "C-c C-o") #'overwrite-mode)
     (define-key map (kbd "C-c C-v") #'bef-mode-reverse-chars)
     (define-key map (kbd "C-c C-r") #'bef-mode-rotate)
