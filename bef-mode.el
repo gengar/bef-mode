@@ -182,7 +182,8 @@
 
 (defun bef-mode-reverse-chars-buffer-substring (beg end)
   (interactive "r")
-  (let* ((str (buffer-substring beg end))
+  (let* ((pos (point))
+         (str (buffer-substring beg end))
          (reversed-str (apply 'string
                               (reverse
                                (string-to-list str)))))
@@ -193,16 +194,19 @@
       (lambda (s)
         (assoc-default s '(("<" . ">")
                            (">" . "<"))))
-      reversed-str))))
+      reversed-str))
+    (goto-char (+ beg (- end pos)))))
 
 (defun bef-mode-reverse-chars ()
-  "Reverse the order of characters in a line."
+  "Reverse the order of characters in a region or a line."
   (interactive)
-  (let* ((pos (point))
-         (beg (line-beginning-position))
-         (end (line-end-position)))
-    (bef-mode-reverse-chars-buffer-substring beg end)
-    (goto-char (+ beg (- end pos)))))
+  (if (use-region-p)
+      (bef-mode-reverse-chars-buffer-substring
+       (region-beginning)
+       (region-end))
+    (bef-mode-reverse-chars-buffer-substring
+     (line-beginning-position)
+     (line-end-position))))
 
 (defun bef-mode-rotate-horizontally (cnt)
   (let* ((pos (point)))
