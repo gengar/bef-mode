@@ -280,8 +280,8 @@
 
 (defvar bef-mode-rotate-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-f") #'bef-mode-rotate-forward)
-    (define-key map (kbd "C-b") #'bef-mode-rotate-backward)
+    (define-key map (kbd "f") #'bef-mode-rotate-forward)
+    (define-key map (kbd "b") #'bef-mode-rotate-backward)
     map))
 
 (defun bef-mode-rotate ()
