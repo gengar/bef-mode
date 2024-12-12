@@ -149,6 +149,9 @@
   (let ((ch (following-char))
         (argf (lambda (args)
                 (or args "()"))))
+    (if (or (= ch 0)
+            (= ch 10))
+        (setq ch (preceding-char)))
     (pcase (aref command-table ch)
       (`((,in . ,out) ,doc)
        (format "%c :: %s -> %s  : %s"
