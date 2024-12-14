@@ -187,6 +187,10 @@
   (push-mark (line-end-position))
   (beginning-of-line))
 
+(defun bef-mode-revert-buffer ()
+  (interactive)
+  (revert-buffer-with-coding-system 'no-conversion))
+
 (defun bef-mode-reverse-chars-buffer-substring (beg end)
   (interactive "r")
   (let* ((pos (point))
