@@ -183,6 +183,10 @@
   (interactive "nInsert byte: \np")
   (insert-byte byte count))
 
+(defun bef-mode-mark-line ()
+  (push-mark (line-end-position))
+  (beginning-of-line))
+
 (defun bef-mode-reverse-chars-buffer-substring (beg end)
   (interactive "r")
   (let* ((pos (point))
@@ -360,10 +364,6 @@
     (font-lock-flush)))
 
 (autoload 'bef-mode-whitespace-turn-on "bef-mode-whitespace")
-
-(defun bef-mode-mark-line ()
-  (push-mark (line-end-position))
-  (beginning-of-line))
 
 ;;;###autoload
 (define-derived-mode bef-mode nil "Bef"
